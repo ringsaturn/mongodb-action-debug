@@ -21,5 +21,12 @@ jobs:
         with:
           mongodb-version: ${{ matrix.mongo }}
 
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: ${{ matrix.go }}
+
+      - run: go install github.com/mongodb/mongo-tools/mongoimport/main -i mongoimport
+
       - name: Prepare data files
         run: cat foo_bar.dumps | mongoimport --host="127.0.0.1" --port="27017" --db="foo" --collection="bar"
