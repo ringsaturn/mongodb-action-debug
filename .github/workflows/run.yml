@@ -1,0 +1,25 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        mongo: [latest"]
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: MongoDB in GitHub Actions
+        uses: supercharge/mongodb-github-action@1.8.0
+        with:
+          mongodb-version: ${{ matrix.mongo }}
+
+      - name: Prepare data files
+        run: cat foo_bar.dumps | mongoimport --host="127.0.0.1" --port="27017" --db="foo" --collection="bar"
