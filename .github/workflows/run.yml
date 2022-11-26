@@ -7,8 +7,25 @@ on:
     branches: [main]
 
 jobs:
-  test:
+  test-latest:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        mongo: ["4.2", "4.4", "5.0", "6.0", "latest"]
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: MongoDB in GitHub Actions
+        uses: supercharge/mongodb-github-action@1.8.0
+        with:
+          mongodb-version: ${{ matrix.mongo }}
+
+      - name: Prepare data files
+        run: cat foo_bar.dumps | mongoimport --host="127.0.0.1" --port="27017" --db="foo" --collection="bar"
+
+  test:
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
         mongo: ["4.2", "4.4", "5.0", "6.0", "latest"]
